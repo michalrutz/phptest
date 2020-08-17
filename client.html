@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Registration</title>
+    <link rel="stylesheet" href="form_css.css" />
+  </head>
+  <body>
+    <br />
+    <form id="chat_form" enctype="multipart/form-data">
+      <br />
+      <input type="file" id="inpFile" name="myFiles[]"  multiple />
+      <button id="bttnUpload" type="submit" value="SUBMIT">upload</button>
+      <br />
+      </form>
+    <br />
+  </body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript">
+  var sub = document.getElementById("bttnUpload");
+  var inpFile = document.getElementById("inpFile");
+
+  sub.addEventListener("click", function () {
+    var req = new XMLHttpRequest();
+    const formData = new FormData();
+    console.log("submited");
+
+    // formData.append("imgFile", imgFile.files[0], "chris.jpg");
+
+    for ( const file of inpFile.files ){
+      formData.append( "myFiles[]", file ); // [] required for PHP
+    }
+
+    req.open("post", "server.php");
+    req.send(formData);
+  });
+</script>
