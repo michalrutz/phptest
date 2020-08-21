@@ -8,31 +8,78 @@
     <br />
     <form id="chat_form" enctype="multipart/form-data">
       <br />
-      <input type="file" id="inpFile" name="myFiles[]"  multiple />
-      <button id="bttnUpload" type="submit" value="SUBMIT">upload</button>
+      <input type="file" id="inpFile" name="myFiles[]" multiple />
+      <button id="submitBtn" type="submit" value="SUBMIT">upload</button>
       <br />
-      </form>
+    </form>
     <br />
+    <p id="response">response</p>
   </body>
 </html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 <script type="text/javascript">
-  var sub = document.getElementById("bttnUpload");
-  var inpFile = document.getElementById("inpFile");
+  $(document).ready(function (e) {
+    // Submit form data via Ajax
 
-  sub.addEventListener("click", function () {
-    var req = new XMLHttpRequest();
-    const formData = new FormData();
-    console.log("submited");
-
-    // formData.append("imgFile", imgFile.files[0], "chris.jpg");kkk
-
-    for ( const file of inpFile.files ){
-      formData.append( "myFiles[]", file ); // [] required for PHP
-    }
-
-    req.open("post", "server.php");
-    req.send(formData);
+    $("#chat_form").on("submit", function (e) {
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "server.php",
+        data: new FormData(this),
+        dataType: "json",
+        contentType: false,
+        cache: false,
+        processData: false,
+        beforeSend: function () {
+          $("#submitBtn").attr("disabled", "disabled");
+          $("#chat_form").css("opacity", ".5");
+        },
+        success: function (response) {
+          //console.log(response);
+          $(".statusMsg").html("");
+          if (response.status == 1) {
+            $("#fupForm")[0].reset();
+            $(".statusMsg").html(
+              '<p class="alert alert-success">' + response.message + "</p>"
+            );
+          } else {
+            $(".statusMsg").html(
+              '<p class="alert alert-danger">' + response.message + "</p>"
+            );
+          }
+          $("#chat_form").css("opacity", "");
+          $("#submitBtn").removeAttr("disabled");
+        },
+      });
+    });
   });
+
+  // var sub = document.getElementById("bttnUpload");
+  // var inpFile = document.getElementById("inpFile");
+
+  // sub.addEventListener("click", function () {
+  //   var req = new XMLHttpRequest();
+  //   const formData = new FormData();
+  //   console.log("submited");
+
+  //   // formData.append("imgFile", imgFile.files[0], "chris.jpg");kkk
+
+  //   var xhttp = new XMLHttpRequest();
+  //   xhttp.onreadystatechange = function () {
+  //     if (this.readyState == 4 && this.status == 200) {
+  //       // let res = JSON.parse(this.responseText);
+  //       console.log(this.responseText);
+  //       // document.getElementById("response").innerHTML = res["msg"];
+  //     }
+  //   };
+
+  //   for (const file of inpFile.files) {
+  //     formData.append("myFiles[]", file); // [] required for PHP
+  //   }
+
+  //   req.open("post", "server.php");
+  //   req.send(formData);
+  // });
 </script>
